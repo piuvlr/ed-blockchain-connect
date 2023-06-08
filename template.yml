@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SerbetBlockchain
+  
+Globals:
+  Function:
+    Timeout: 3
+Resources:
+  SerbetBlockchain:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: index.handler
+      Runtime: nodejs18.x
+      MemorySize: 1024
+      Timeout: 500
+      Architectures:
+        - x86_64
