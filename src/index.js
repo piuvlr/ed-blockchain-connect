@@ -1,9 +1,8 @@
 'use strict';
 
 const config = require("./config");
-const {queryStringHandler, queryArrayHandler, queryObjectHandler} = require("./query");
+const queryObjectHandler = require("./query");
 const invokeHandler = require("./invoke");
-const {queryEventsHandler} = require("./queryEvents");
 const logger = require("./logging").getLogger("lambdaFunction");
 
 function buildCommonRequestObject(chaincodeFunction, chaincodeFunctionArgs) {
@@ -38,14 +37,11 @@ async function chaincodeTransactionHandler(event, handlerFunction) {
 }
 
 async function handler(event, context, callback) {
-    return "SUCCESS";
-}
-/* async function handler(event, context, callback) {
     let functionType = event.functionType;
     let handlerFunction;
 
     if (functionType == "query") {
-      handlerFunction = queryStringHandler;
+      handlerFunction = queryObjectHandler;
     } else if (functionType == "invoke") {
       handlerFunction = invokeHandler;
     } else {
@@ -67,6 +63,6 @@ async function handler(event, context, callback) {
       let returnMessage = err.message || err;
       callback(returnMessage);
     }
-}; */
+};
 
 module.exports = {handler};
