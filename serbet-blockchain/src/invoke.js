@@ -69,12 +69,12 @@ async function invokeChaincode(request) {
                         eh.disconnect();
                     }, 10000);
                     eh.registerTxEvent(transactionId.getTransactionID(), (tx, code, block_num) => {
-                        logger.info('##### invokeChaincode - The invoke chaincode transaction has been committed on peer %s',eh.getPeerAddr());
+                        logger.info('##### invokeChaincode - The invoke chaincode transaction has been committed on peer %s', eh.getPeerAddr());
                         logger.info('##### invokeChaincode - Transaction %s has status of %s in block %s', tx, code, block_num);
                         clearTimeout(event_timeout);
 
                         if (code !== 'VALID') {
-                            let message = util.format('##### invokeChaincode - The invoke chaincode transaction was invalid, code:%s',code);
+                            let message = util.format('##### invokeChaincode - The invoke chaincode transaction was invalid, code:%s', code);
                             logger.error(message);
                             return reject(new Error(message));
                         } else {
@@ -91,7 +91,7 @@ async function invokeChaincode(request) {
                         // so no real need to set here, however for 'disconnect'
                         // the default is false as most event hubs are long running
                         // in this use case we are using it only once
-                        {unregister: true, disconnect: true}
+                        { unregister: true, disconnect: true }
                     );
                     eh.connect();
                 });
@@ -113,7 +113,7 @@ async function invokeChaincode(request) {
             if (response.status === 'SUCCESS') {
                 logger.info('##### invokeChaincode - Successfully sent transaction to the ordering service.');
             } else {
-                error_message = util.format('##### invokeChaincode - Failed to order the transaction. Error code: %s',response.status);
+                error_message = util.format('##### invokeChaincode - Failed to order the transaction. Error code: %s', response.status);
                 error_message_displayable = response.status;
                 logger.info(error_message);
             }
@@ -122,20 +122,20 @@ async function invokeChaincode(request) {
             for (let i in results) {
                 let event_hub_result = results[i];
                 let event_hub = event_hubs[i];
-                logger.info('##### invokeChaincode - Event results for event hub :%s',event_hub.getPeerAddr());
+                logger.info('##### invokeChaincode - Event results for event hub :%s', event_hub.getPeerAddr());
                 if (typeof event_hub_result === 'string') {
                     logger.info('##### invokeChaincode - ' + event_hub_result);
-                } 
+                }
                 else {
                     if (!error_message) error_message = event_hub_result.toString();
                     logger.info('##### invokeChaincode - ' + event_hub_result.toString());
                 }
             }
-        } 
+        }
         else {
-            error_message = util.format('##### invokeChaincode - Failed to send Proposal and receive all good ProposalResponse. Status code: ' + 
-                proposalResponses[0].status + ', ' + 
-                proposalResponses[0].message + '\n' +  
+            error_message = util.format('##### invokeChaincode - Failed to send Proposal and receive all good ProposalResponse. Status code: ' +
+                proposalResponses[0].status + ', ' +
+                proposalResponses[0].message + '\n' +
                 proposalResponses[0].stack);
             logger.info(error_message);
             error_message_displayable = proposalResponses[0].message;
@@ -155,7 +155,7 @@ async function invokeChaincode(request) {
         let response = {};
         response.transactionId = transactionId.getTransactionID();
         return response;
-    } 
+    }
     else {
         let message = util.format('##### invokeChaincode - Failed to invoke chaincode :%s', error_message);
         logger.error(message);

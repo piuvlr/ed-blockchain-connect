@@ -1,18 +1,25 @@
 'use strict';
 
 const config = require("./config");
-const queryObjectHandler = require("./query");
 const invokeHandler = require("./invoke");
 const logger = require("./logging").getLogger("lambdaFunction");
 
 function buildCommonRequestObject(chaincodeFunction, chaincodeFunctionArgs) {
-    const argsString = JSON.stringify(chaincodeFunctionArgs);
+
+    if (chaincodeFunction == "invoke") {
+        const objectJson = JSON.stringify(chaincodeFunctionArgs[0]);
+        chaincodeFunctionArgs[0] = objectJson;
+    }
+
     const request = {
         chaincodeId: config.chaincodeId,
         fcn: chaincodeFunction,
-        args: [argsString],
+        args: chaincodeFunctionArgs,
         chainId: config.channelName,
     };
+
+    logger.info("==request==");
+    logger.info(request);
 
     return request;
 };
@@ -40,9 +47,7 @@ async function handler(event, context, callback) {
     let functionType = event.action;
     let handlerFunction;
 
-    if (functionType == "query") {
-        handlerFunction = queryObjectHandler;
-    } else if (functionType == "invoke") {
+    if (functionType == "invoke" || functionType == "query") {
         handlerFunction = invokeHandler;
     } else {
         throw new Error(`Unknow Function Type: ${functionType}`);
@@ -51,13 +56,8 @@ async function handler(event, context, callback) {
     config["fabricUsername"] = event.fabricUsername;
 
     try {
-        if (functionType == "queryEvents") {
-            let result = await handlerFunction(event.transactionId);
-            callback(null, result);
-        } else {
-            let result = await chaincodeTransactionHandler(event, handlerFunction);
-            callback(null, result);
-        }
+        let result = await chaincodeTransactionHandler(event, handlerFunction);
+        callback(null, result);
     } catch (err) {
         logger.error("Error in Lambda Fabric handler: ", err);
         let returnMessage = err.message || err;
