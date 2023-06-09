@@ -1,0 +1,9 @@
+{
+  "action": "invoke",
+  "chaincodeFunction": "invoke",
+  "fabricUsername": "admin",
+  "chaincodeFunctionArgs": {
+    "nome": "Joao"
+  }
+
+}

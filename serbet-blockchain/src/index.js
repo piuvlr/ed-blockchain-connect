@@ -7,13 +7,13 @@ const logger = require("./logging").getLogger("lambdaFunction");
 
 function buildCommonRequestObject(chaincodeFunction, chaincodeFunctionArgs) {
     const argsString = JSON.stringify(chaincodeFunctionArgs);
-	const request = {
+    const request = {
         chaincodeId: config.chaincodeId,
         fcn: chaincodeFunction,
         args: [argsString],
         chainId: config.channelName,
     };
-    
+
     return request;
 };
 
@@ -32,37 +32,37 @@ async function chaincodeTransactionHandler(event, handlerFunction) {
     const request = buildCommonRequestObject(chaincodeFunction, chaincodeFunctionArgs);
     let result = await handlerFunction(request);
 
-    logger.info("=== Handler Function End ===");  
+    logger.info("=== Handler Function End ===");
     return result;
 }
 
 async function handler(event, context, callback) {
-    let functionType = event.functionType;
+    let functionType = event.action;
     let handlerFunction;
 
     if (functionType == "query") {
-      handlerFunction = queryObjectHandler;
+        handlerFunction = queryObjectHandler;
     } else if (functionType == "invoke") {
-      handlerFunction = invokeHandler;
+        handlerFunction = invokeHandler;
     } else {
-      throw new Error(`Unknow Function Type: ${functionType}`);
+        throw new Error(`Unknow Function Type: ${functionType}`);
     }
 
     config["fabricUsername"] = event.fabricUsername;
 
     try {
-      if (functionType == "queryEvents") {
-        let result = await handlerFunction(event.transactionId);
-        callback(null, result);
-      } else {
-        let result = await chaincodeTransactionHandler(event, handlerFunction);
-        callback(null, result);
-      }
+        if (functionType == "queryEvents") {
+            let result = await handlerFunction(event.transactionId);
+            callback(null, result);
+        } else {
+            let result = await chaincodeTransactionHandler(event, handlerFunction);
+            callback(null, result);
+        }
     } catch (err) {
-      logger.error("Error in Lambda Fabric handler: ", err);
-      let returnMessage = err.message || err;
-      callback(returnMessage);
+        logger.error("Error in Lambda Fabric handler: ", err);
+        let returnMessage = err.message || err;
+        callback(returnMessage);
     }
 };
 
-module.exports = {handler};
+module.exports = { handler };
