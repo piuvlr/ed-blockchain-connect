@@ -1,0 +1,23 @@
+{
+    "name": "serbet-blockchain-lambda",
+    "version": "1.0.0",
+    "description": "A Lambda function to execute transactions against Amazon Managed Blockchain",
+    "main": "index.js",
+    "lambdaFunction": "SerbetBlockchain",
+    "awsLambddaName": "serbet-blockchain-lambda",
+    "engines": {
+        "node": ">=10.0.0 <12",
+        "npm": ">=6.0.0"
+    },
+    "dependencies": {
+        "aws-sdk": "^2.494.0",
+        "fabric-client": "~1.4.0",
+        "log4js": "^6.1.2"
+    },
+    "scripts": {
+        "build": "cd ../ && rm -r $npm_package_name.zip && sam build && cd .aws-sam/build/$npm_package_lambdaFunction && zip -r ../../../$npm_package_name.zip *",
+        "run": "cd ../ && sam build && clear && sam local invoke -e events/event.json $npm_package_lambdaFunction --log-file logfile.txt &&  tr '\r' '\n' <logfile.txt && cat logfile.txt",
+        "deploy": "npm run build && cd ../ && aws lambda update-function-code --function-name $npm_package_awsLambdaName --zip-file fileb://$npm_package_name.zip"
+    },
+    "author": "Johann Bandelow & Caio Simas"
+}
