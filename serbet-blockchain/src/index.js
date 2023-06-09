@@ -24,13 +24,13 @@ function buildCommonRequestObject(chaincodeFunction, chaincodeFunctionArgs) {
     return request;
 };
 
-async function chaincodeTransactionHandler(event, handlerFunction) {
-    let chaincodeFunction = event.chaincodeFunction;
+async function chaincodeTransactionHandler(body, handlerFunction) {
+    let chaincodeFunction = body.chaincodeFunction;
     if (!chaincodeFunction) {
         throw new Error("'chaincodeFunction' must be specified");
     }
 
-    let chaincodeFunctionArgs = event.chaincodeFunctionArgs || {};
+    let chaincodeFunctionArgs = body.chaincodeFunctionArgs || {};
 
     logger.info("=== Handler Function Start ===");
 
@@ -44,7 +44,9 @@ async function chaincodeTransactionHandler(event, handlerFunction) {
 }
 
 async function handler(event, context, callback) {
-    let functionType = event.action;
+    const body = JSON.parse(event.body);
+
+    let functionType = body.action;
     let handlerFunction;
 
     if (functionType == "invoke" || functionType == "query") {
@@ -53,16 +55,31 @@ async function handler(event, context, callback) {
         throw new Error(`Unknow Function Type: ${functionType}`);
     }
 
-    config["fabricUsername"] = event.fabricUsername;
+    config["fabricUsername"] = body.fabricUsername;
 
     try {
-        let result = await chaincodeTransactionHandler(event, handlerFunction);
-        callback(null, result);
+        let result = await chaincodeTransactionHandler(body, handlerFunction);
+        return okResponse(result);
     } catch (err) {
         logger.error("Error in Lambda Fabric handler: ", err);
         let returnMessage = err.message || err;
-        callback(returnMessage);
+        return okResponse(returnMessage);
     }
 };
+
+function okResponse(result) {
+    var response = {
+        "isBase64Encoded": false,
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+
+        "body": JSON.parse(result)
+    }
+
+    console.log(response);
+    return response
+}
 
 module.exports = { handler };
