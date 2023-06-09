@@ -10,12 +10,8 @@ Resources:
   SerbetBlockchain:
     Type: AWS::Serverless::Function
     Properties:
-<<<<<<< HEAD
-      CodeUri: src/
-=======
       CodeUri: serbet-blockchain/
->>>>>>> 17c97f86b8a19987fe766e4c22b8628f399847b8
-      Handler: index.handler
+      Handler: src/index.handler
       Runtime: nodejs18.x
       MemorySize: 1024
       Timeout: 500
