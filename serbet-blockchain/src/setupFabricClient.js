@@ -2,34 +2,8 @@ const path = require("path");
 const AWS = require('aws-sdk');
 const Fabric_Client = require('fabric-client');
 const config = require("./config");
+const fs = require("fs");
 const logger = require("./logging").getLogger("setupFabricClient");
-
-function getSecretIDForKey(keyName, username) {
-    return "dev/fabricOrgs/" + config.memberName + "/" + username + "/" + keyName;
-}
-
-async function getSecret(keyName, username) {
-    const client = new AWS.SecretsManager({
-        region: "us-east-1"
-    });
-    
-    return new Promise((resolve, reject) => {
-        client.getSecretValue({SecretId: getSecretIDForKey(keyName, username)}, function(err, data) {
-            if (err) {
-                return reject(err);
-            }
-
-            if ('SecretString' in data) {
-                secret = data.SecretString;
-            } else {
-                let buff = new Buffer(data.SecretBinary, 'base64');
-                secret = buff.toString('ascii');
-            }
-
-            return resolve(secret);
-        });
-    });
-}
 
 async function setupClient() {
     
@@ -45,16 +19,15 @@ async function setupClient() {
 	fabric_client.setCryptoSuite(crypto_suite);
 
     const username = config.fabricUsername;
-    const privatePEM = await getSecret("pk", username);
-    const signedPEM = await getSecret("signcert", username);
+    const privatePEM = fs.readFileSync(path.resolve(__dirname, "./certs/keystore/40b37738efc2748b8a8e3e3af7ddb53f1639c4b39bb451c458ab9bba49ef7a51_sk"), "utf8");
+    const signedPEM =  fs.readFileSync(path.resolve(__dirname, "./certs/signcerts/cert.pem"), "utf8");
 
-	fabricUser = await fabric_client.createUser({username, mspid: config.mspID, cryptoContent: {privateKeyPEM: privatePEM, signedCertPEM: signedPEM}, skipPersistence: true});
+	let fabricUser = await fabric_client.createUser({username: username, mspid: config.mspID, cryptoContent: {privateKeyPEM: privatePEM, signedCertPEM: signedPEM}, skipPersistence: true});
     fabric_client.setUserContext(fabricUser, true);
 
     logger.info("=== setupClient end ===");
 
     return fabric_client;
-
 }
 
 module.exports = setupClient;

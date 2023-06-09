@@ -28,16 +28,16 @@ orderers:
     grpcOptions:
       ssl-target-name-override: orderer.n-mmbyd2u56rfpbdqrj6gv7uudda.managedblockchain.us-east-1.amazonaws.com
     tlsCACerts:
-      path: ~/managedblockchain-tls-chain.pem
+      path: certs/managedblockchain-tls-chain.pem
 
 peers:
   peer1:
-    url: grpcs://%nd-n7qfgnkuljhbzghtfc7yrpxfiq.m-tq6why2wyjhsxo5jzg5u3nvqei.n-mmbyd2u56rfpbdqrj6gv7uudda.managedblockchain.us-east-1.amazonaws.com:30003
+    url: grpcs://nd-n7qfgnkuljhbzghtfc7yrpxfiq.m-tq6why2wyjhsxo5jzg5u3nvqei.n-mmbyd2u56rfpbdqrj6gv7uudda.managedblockchain.us-east-1.amazonaws.com:30003
     eventUrl: grpcs://nd-n7qfgnkuljhbzghtfc7yrpxfiq.m-tq6why2wyjhsxo5jzg5u3nvqei.n-mmbyd2u56rfpbdqrj6gv7uudda.managedblockchain.us-east-1.amazonaws.com:30004
     grpcOptions:
       ssl-target-name-override: nd-n7qfgnkuljhbzghtfc7yrpxfiq.m-tq6why2wyjhsxo5jzg5u3nvqei.n-mmbyd2u56rfpbdqrj6gv7uudda.managedblockchain.us-east-1.amazonaws.com
     tlsCACerts:
-      path: ~/managedblockchain-tls-chain.pem
+      path: certs/managedblockchain-tls-chain.pem
 
 certificateAuthorities:
   ca-org1:
@@ -45,5 +45,5 @@ certificateAuthorities:
     httpOptions:
       verify: false
     tlsCACerts:
-      path: ~/managedblockchain-tls-chain.pem
+      path: certs/managedblockchain-tls-chain.pem
     caName: m-TQ6WHY2WYJHSXO5JZG5U3NVQEI
