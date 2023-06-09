@@ -51,8 +51,13 @@ async function handler(event, context, callback) {
     config["fabricUsername"] = event.fabricUsername;
 
     try {
+      if (functionType == "queryEvents") {
+        let result = await handlerFunction(event.transactionId);
+        callback(null, result);
+      } else {
         let result = await chaincodeTransactionHandler(event, handlerFunction);
         callback(null, result);
+      }
     } catch (err) {
       logger.error("Error in Lambda Fabric handler: ", err);
       let returnMessage = err.message || err;

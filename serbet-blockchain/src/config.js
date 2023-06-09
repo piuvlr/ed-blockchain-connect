@@ -6,7 +6,8 @@ let configObject = {
     "chaincodeId": process.env.CHAIN_CODE_ID || "ngo",
     "cryptoFolder": process.env.CRYPTO_FOLDER || '/tmp',
     "mspID": process.env.MSP || 'm-1A2B3CXXXXXXXX',
-    "memberName": process.env.MEMBERNAME || "org1"
+    "memberName": process.env.MEMBERNAME || "org1",
+    "fabricUsername": "admin"
 }
 
 module.exports = configObject;
